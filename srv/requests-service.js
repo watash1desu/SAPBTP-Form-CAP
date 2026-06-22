@@ -1,18 +1,11 @@
-// srv/requests-service.js
-// ─────────────────────────────────────────────────────────────────────────────
-// CAP service handler for RequestsService.
-//
-// TODAY (no real DB yet): reads/writes requests in memory so the frontend
-// can run against `cds serve` standalone this weekend.
-//
-// WHEN the backend team is ready: delete the IN-MEMORY STORE section below
+// when the backend team is ready: delete the IN-MEMORY STORE section below
 // and replace each handler body with `await db.run(...)` calls — the service
 // interface (actions, paths, return shapes) doesn't change.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const cds = require("@sap/cds");
 
-// ─── Helpers (same logic as requests-store.js, now living server-side) ────────
+// ─── Helpers ────────
 function todayLabel() {
   return new Date().toISOString().slice(0, 10);
 }
@@ -91,8 +84,6 @@ let REQUESTS = [
 ];
 
 // ─── Serialise stages/comments/attachments for OData response ─────────────────
-// CAP stores LargeString as-is; we keep them as parsed objects in memory
-// but must stringify for the wire format.
 function serialise(r) {
   return {
     ...r,
@@ -136,7 +127,7 @@ module.exports = cds.service.impl(async function (srv) {
     // Simple in-memory filter for $filter support
     let results = REQUESTS.map(serialise);
     const filter = req.query.SELECT && req.query.SELECT.where;
-    // For now return all; CAP will apply OData $filter automatically once a real
+    // For now returns all; CAP will apply OData $filter automatically once a real
     // DB is wired in. Frontend sends ?currentPersona=assessor as a plain param.
     const persona = req.data && req.data.persona;
     if (persona) {

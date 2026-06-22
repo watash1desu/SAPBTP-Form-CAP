@@ -11,7 +11,7 @@ namespace btp.requests;
 
 // ─── Stage snapshot (one per approval persona) ────────────────────────────────
 // Stored as JSON blobs so the schema doesn't need a join for every stage read.
-// When the backend team wants relational stages they can promote these to
+// When the backend team wants relational stages, promote these to
 // separate entities — the frontend only ever reads the `stages` field as a whole.
 
 // ─── Main entity ─────────────────────────────────────────────────────────────
