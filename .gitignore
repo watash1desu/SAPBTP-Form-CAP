@@ -1,19 +1,38 @@
+# ─── Node ────────────────────────────────────────────────────────────────────
 node_modules/
-target/
-_out/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn-integrity
+
+# ─── CAP / CDS ───────────────────────────────────────────────────────────────
 gen/
+.cds-mtxs/
+*.db                     # SQLite database files (local dev only)
+.env                     # Local env vars (never commit secrets)
 
-.cdsrc-private.json
-default-*.json
-*.sqlite
-
-# MTA
+# ─── MTA Build ───────────────────────────────────────────────────────────────
 mta_archives/
-*_mta_build_tmp
 *.mtar
+resources/
 
-# Other
+# ─── SAP BTP / CF ────────────────────────────────────────────────────────────
+default-env.json         # Local VCAP_SERVICES / credentials
+default-services.json
+
+# ─── IDE / OS ────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
 .DS_Store
+Thumbs.db
+*.swp
+*.swo
 
-# @cap-js/cds-typer
-@cds-models
+# ─── Logs ────────────────────────────────────────────────────────────────────
+logs/
+*.log
+
+# ─── Test / Coverage ─────────────────────────────────────────────────────────
+coverage/
+.nyc_output/
