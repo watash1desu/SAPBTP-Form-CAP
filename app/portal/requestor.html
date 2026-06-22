@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ITC Limited — Service Request Portal (Requestor)</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ============================== LOGIN / SIGNUP ============================== -->
+  <div class="login-page" id="login-page">
+    <div class="login-card">
+      <div class="login-logo"><img src="assets/itc-logo.svg" alt="ITC Limited" class="company-logo"></div>
+      <h2 class="login-title">Service Request Portal</h2>
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" onclick="showAuthTab('login')">Log In</button>
+        <button class="auth-tab" id="tab-signup" onclick="showAuthTab('signup')">Sign Up</button>
+      </div>
+      <div class="auth-form active" id="login-form">
+        <div class="field-group">
+          <label class="field-label" for="loginUsername">Username</label>
+          <input class="field-input" type="text" id="loginUsername" placeholder="Enter your username">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="loginPassword">Password</label>
+          <input class="field-input" type="password" id="loginPassword" placeholder="Enter your password">
+        </div>
+        <p class="login-error" id="login-error"></p>
+        <button class="btn-primary login-btn" onclick="handleLogin()">Sign In</button>
+        <p class="auth-switch-text">New user? <a href="#" onclick="showAuthTab('signup'); return false;">Please sign up</a></p>
+      </div>
+      <div class="auth-form" id="signup-form">
+        <div class="field-group">
+          <label class="field-label" for="signupUsername">Choose a username</label>
+          <input class="field-input" type="text" id="signupUsername" placeholder="Enter a username">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="signupPassword">Choose a password</label>
+          <input class="field-input" type="password" id="signupPassword" placeholder="Enter a password">
+        </div>
+        <p class="login-error" id="signup-error"></p>
+        <button class="btn-primary login-btn" onclick="handleSignup()">Create Account</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================== MAIN APP ============================== -->
+  <div class="form-wrapper form-wrapper--gated" id="form-wrapper">
+
+    <header class="sap-header">
+      <div class="sap-header-left">
+        <img src="assets/itc-logo.svg" alt="ITC Limited" class="company-logo company-logo--header">
+        <span class="sap-portal-name">Service Request Portal — Requestor</span>
+      </div>
+      <div class="sap-header-right">
+        <div class="user-profile">
+          <div class="user-avatar" id="user-avatar"></div>
+          <span class="user-name" id="user-name"></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="page-title-bar">
+      <div class="page-title-left">
+        <h1 class="page-title" id="page-title">Dashboard</h1>
+        <p class="page-subtitle" id="page-subtitle">Overview of your service requests</p>
+      </div>
+      <button class="btn-secondary" id="btn-cancel" onclick="handleCancel()" style="display:none;">Cancel</button>
+    </div>
+
+    <div class="main-layout">
+
+      <nav class="app-nav" id="app-nav">
+        <div class="app-nav-item active" id="nav-dashboard" onclick="showDashboard()">
+          <span class="app-nav-item-left"><span class="app-nav-icon">&#9635;</span><span>Dashboard</span></span>
+        </div>
+        <div class="app-nav-item" id="nav-new-request" onclick="showNewRequestForm()">
+          <span class="app-nav-item-left"><span class="app-nav-icon">&#10010;</span><span>New Request</span></span>
+        </div>
+      </nav>
+
+      <nav class="step-tracker hidden" id="step-tracker">
+        <div class="tracker-item active" data-step="1">
+          <div class="tracker-circle">1</div>
+          <div class="tracker-label"><span class="tracker-title">Request Details</span><span class="tracker-desc">Basic information about your request</span></div>
+        </div>
+        <div class="tracker-connector"></div>
+        <div class="tracker-item" data-step="2">
+          <div class="tracker-circle">2</div>
+          <div class="tracker-label"><span class="tracker-title">Service Configuration</span><span class="tracker-desc">Details specific to the selected service</span></div>
+        </div>
+        <div class="tracker-connector"></div>
+        <div class="tracker-item" data-step="3">
+          <div class="tracker-circle">3</div>
+          <div class="tracker-label"><span class="tracker-title">Review &amp; Submit</span><span class="tracker-desc">Review and send to the Assessor</span></div>
+        </div>
+      </nav>
+
+      <div class="form-content">
+
+        <!-- ==================== DASHBOARD ==================== -->
+        <div class="app-page active" id="dashboard-view">
+          <div class="dashboard-cards">
+            <div class="dash-card" data-filter="all" onclick="filterRequests('all')"><span class="dash-card-number" id="count-all">0</span><span class="dash-card-label">All Requests</span></div>
+            <div class="dash-card dash-card--pending" data-filter="pending" onclick="filterRequests('pending')"><span class="dash-card-number" id="count-pending">0</span><span class="dash-card-label">Pending</span></div>
+            <div class="dash-card dash-card--inprogress" data-filter="in-progress" onclick="filterRequests('in-progress')"><span class="dash-card-number" id="count-inprogress">0</span><span class="dash-card-label">In Progress</span></div>
+            <div class="dash-card dash-card--accepted" data-filter="approved" onclick="filterRequests('approved')"><span class="dash-card-number" id="count-approved">0</span><span class="dash-card-label">Approved</span></div>
+            <div class="dash-card dash-card--rejected" data-filter="rejected" onclick="filterRequests('rejected')"><span class="dash-card-number" id="count-rejected">0</span><span class="dash-card-label">Rejected</span></div>
+            <div class="dash-card dash-card--draft" data-filter="draft" onclick="filterRequests('draft')"><span class="dash-card-number" id="count-draft">0</span><span class="dash-card-label">Drafts Saved</span></div>
+          </div>
+
+          <div class="requests-section">
+            <div class="requests-header">
+              <h2 class="section-title" style="border-bottom:none; margin-bottom:0; padding-bottom:0;">My Requests</h2>
+              <span class="requests-filter-label" id="active-filter-label">Showing all</span>
+            </div>
+            <div class="requests-column-labels">
+              <span class="col-label" style="width:120px;">Request ID</span>
+              <span class="col-label col-label--title">Title</span>
+              <span class="col-label col-label--priority">Priority</span>
+              <span class="col-label col-label--date">Due Date</span>
+              <span class="col-label col-label--status">Status</span>
+            </div>
+            <ul class="requests-list" id="requests-list"></ul>
+            <p class="field-hint" style="margin-top:14px;">Drafts can be reopened by clicking on them. Submitted requests are view-only here — their status is updated by the approval team.</p>
+          </div>
+        </div>
+        <!-- END DASHBOARD -->
+
+        <!-- ==================== NEW REQUEST FORM ==================== -->
+        <div class="app-page" id="new-request-view">
+
+          <div class="form-page active" id="step-1">
+            <div class="form-section">
+              <h2 class="section-title">Request Details</h2>
+
+              <div class="field-row">
+                <div class="field-group">
+                  <label class="field-label">Request ID</label>
+                  <div class="field-readonly" id="requestIdDisplay">—</div>
+                  <p class="field-hint">Auto-generated for this request</p>
+                </div>
+                <div class="field-group">
+                  <label class="field-label" for="requestCategory">Request Category <span class="required">*</span></label>
+                  <select class="field-select" id="requestCategory">
+                    <option value="" disabled selected>Select Request Category</option>
+                    <option value="subaccount-creation">Subaccount Creation</option>
+                    <option value="directory-creation">Directory Creation</option>
+                    <option value="subaccount-name-change">Subaccount Name Change</option>
+                    <option value="use-case-initiation">Use Case Initiation</option>
+                    <option value="entitlement-configuration">Entitlement Configuration</option>
+                    <option value="role-access">Role Access in SAP BTP</option>
+                    <option value="other">Other (Specify)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label">Priority <span class="required">*</span></label>
+                <div class="radio-group">
+                  <label class="radio-option"><input type="radio" name="priority" value="low"> Low</label>
+                  <label class="radio-option"><input type="radio" name="priority" value="medium"> Medium</label>
+                  <label class="radio-option"><input type="radio" name="priority" value="high"> High</label>
+                  <label class="radio-option"><input type="radio" name="priority" value="critical"> Critical</label>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="requestTitle">Request Title <span class="required">*</span></label>
+                <input class="field-input" type="text" id="requestTitle" placeholder="Enter a short title for your request">
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="requiredByDate">Required By Date <span class="required">*</span></label>
+                <input class="field-input" type="date" id="requiredByDate">
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="businessJustification">Business Justification <span class="required">*</span></label>
+                <textarea class="field-textarea" id="businessJustification" rows="4" placeholder="Describe why this request is needed"></textarea>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="businessUnit">Business Unit <span class="required">*</span></label>
+                <select class="field-select" id="businessUnit">
+                  <option value="" disabled selected>Select Business Unit</option>
+                  <option value="sap-coe">SAP Center of Excellence</option>
+                  <option value="finance">Finance</option>
+                  <option value="technology">Technology</option>
+                  <option value="operations">Operations</option>
+                  <option value="hr">Human Resources</option>
+                </select>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="department">Department <span class="required">*</span></label>
+                <select class="field-select" id="department">
+                  <option value="" disabled selected>Select Department</option>
+                  <option value="technology">Technology</option>
+                  <option value="finance">Finance</option>
+                  <option value="hr">Human Resources</option>
+                  <option value="operations">Operations</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-page" id="step-2">
+            <div class="form-section">
+              <h2 class="section-title"><span class="section-icon">&#9729;</span> Service Configuration</h2>
+              <div class="field-row">
+                <div class="field-group">
+                  <label class="field-label" for="subaccountName">Subaccount Name <span class="required">*</span></label>
+                  <input class="field-input" type="text" id="subaccountName" placeholder="Enter subaccount name">
+                </div>
+                <div class="field-group">
+                  <label class="field-label" for="parentGlobalAccount">Parent Global Account / Directory <span class="required">*</span></label>
+                  <select class="field-select" id="parentGlobalAccount">
+                    <option value="" disabled selected>Select Global Account</option>
+                    <option value="sapcoe-global">SAPCOE Global Account</option>
+                    <option value="prod-global">Production Global Account</option>
+                    <option value="dev-global">Development Global Account</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field-group">
+                  <label class="field-label" for="region">Region <span class="required">*</span></label>
+                  <select class="field-select" id="region">
+                    <option value="" disabled selected>Select Region</option>
+                    <option value="ap-mumbai">Asia Pacific (Mumbai)</option>
+                    <option value="ap-singapore">Asia Pacific (Singapore)</option>
+                    <option value="eu-frankfurt">Europe (Frankfurt)</option>
+                    <option value="us-east">US East (Virginia)</option>
+                    <option value="us-west">US West (Oregon)</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label class="field-label" for="businessOwner">Business Owner <span class="required">*</span></label>
+                  <input class="field-input" type="text" id="businessOwner" placeholder="Enter business owner name">
+                </div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Environment <span class="required">*</span></label>
+                <div class="radio-group">
+                  <label class="radio-option"><input type="radio" name="environment" value="cloud-foundry"> Cloud Foundry</label>
+                  <label class="radio-option"><input type="radio" name="environment" value="kyma"> Kyma</label>
+                </div>
+              </div>
+              <div class="field-group field-group--half">
+                <label class="field-label" for="estimatedUsers">Estimated Number of Users <span class="required">*</span></label>
+                <input class="field-input" type="number" id="estimatedUsers" placeholder="e.g. 25" min="1">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-page" id="step-3">
+            <div class="form-section" style="border:none; padding:0; background:none;">
+              <h2 class="section-title" style="border-bottom:none;">Review &amp; Submit</h2>
+              <p class="section-placeholder" style="margin-bottom:20px;">Please review your request before sending it to the Assessor.</p>
+              <div id="review-summary" class="review-cards"></div>
+            </div>
+          </div>
+
+        </div>
+        <!-- END NEW REQUEST FORM -->
+
+      </div>
+    </div>
+
+    <footer class="form-footer" id="form-footer" style="display:none;">
+      <button class="btn-secondary" id="btn-back" onclick="goBack()">Back</button>
+      <div class="footer-right">
+        <button class="btn-secondary" onclick="handleSaveDraft()">Save as Draft</button>
+        <button class="btn-primary" id="btn-next" onclick="goNext()">Next</button>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="requests-store.js"></script>
+  <script src="requestor.js"></script>
+</body>
+</html>

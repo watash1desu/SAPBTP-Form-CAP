@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ITC Limited — Service Request Portal (BTPCOE Head)</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="form-wrapper form-wrapper--gated" id="form-wrapper">
+
+    <header class="sap-header">
+      <div class="sap-header-left">
+        <img src="assets/itc-logo.svg" alt="ITC Limited" class="company-logo company-logo--header">
+        <span class="sap-portal-name">Service Request Portal — BTPCOE Head</span>
+      </div>
+      <div class="sap-header-right">
+        <div class="user-profile">
+          <div class="user-avatar user-avatar--btpcoeHead">BH</div>
+          <span class="user-name">BTPCOE Head</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="page-title-bar">
+      <div class="page-title-left">
+        <h1 class="page-title" id="page-title">Dashboard</h1>
+        <p class="page-subtitle" id="page-subtitle">Overview of all service requests</p>
+      </div>
+    </div>
+
+    <div class="main-layout">
+      <nav class="app-nav" id="app-nav">
+        <div class="app-nav-item active" id="nav-dashboard" onclick="showDashboard()">
+          <span class="app-nav-item-left"><span class="app-nav-icon">&#9635;</span><span>Dashboard</span></span>
+        </div>
+        <div class="app-nav-item" id="nav-queue" onclick="showQueue()">
+          <span class="app-nav-item-left"><span class="app-nav-icon">&#128203;</span><span>My Queue</span></span>
+          <span class="app-nav-count" id="queue-count">0</span>
+        </div>
+      </nav>
+
+      <div class="form-content">
+
+        <div class="app-page active" id="dashboard-view">
+          <div class="dashboard-cards">
+            <div class="dash-card" data-filter="all" onclick="filterDashboard('all')"><span class="dash-card-number" id="count-all">0</span><span class="dash-card-label">All Requests</span></div>
+            <div class="dash-card dash-card--pending" data-filter="pending" onclick="filterDashboard('pending')"><span class="dash-card-number" id="count-pending">0</span><span class="dash-card-label">Pending</span></div>
+            <div class="dash-card dash-card--inprogress" data-filter="in-progress" onclick="filterDashboard('in-progress')"><span class="dash-card-number" id="count-inprogress">0</span><span class="dash-card-label">In Progress</span></div>
+            <div class="dash-card dash-card--accepted" data-filter="approved" onclick="filterDashboard('approved')"><span class="dash-card-number" id="count-approved">0</span><span class="dash-card-label">Approved</span></div>
+            <div class="dash-card dash-card--rejected" data-filter="rejected" onclick="filterDashboard('rejected')"><span class="dash-card-number" id="count-rejected">0</span><span class="dash-card-label">Rejected</span></div>
+          </div>
+          <div class="requests-section">
+            <div class="requests-header">
+              <h2 class="section-title" style="border-bottom:none; margin-bottom:0; padding-bottom:0;">All Requests</h2>
+              <span class="requests-filter-label" id="active-filter-label">Showing all</span>
+            </div>
+            <div class="requests-column-labels">
+              <span class="col-label" style="width:120px;">Request ID</span>
+              <span class="col-label col-label--title">Title</span>
+              <span class="col-label col-label--priority">Priority</span>
+              <span class="col-label col-label--date">Due Date</span>
+              <span class="col-label col-label--status">Status</span>
+            </div>
+            <ul class="requests-list" id="requests-list"></ul>
+          </div>
+        </div>
+
+        <div class="app-page" id="queue-view">
+          <div class="queue-layout">
+            <div class="queue-list-panel">
+              <div class="queue-list-title">Requests (<span id="queue-list-count">0</span>)</div>
+              <div class="queue-list-subtitle">Pending your action</div>
+              <ul class="queue-card-list" id="queue-card-list"></ul>
+            </div>
+            <div class="queue-detail-panel" id="queue-detail-panel">
+              <div class="queue-detail-placeholder">Select a request from the list to review it.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="app-page" id="detail-view">
+          <span class="detail-back-link" onclick="backToDashboard()">&#8592; Back to Dashboard</span>
+          <div id="detail-readonly-content"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="requests-store.js"></script>
+  <script src="btpcoe-head.js"></script>
+</body>
+</html>
